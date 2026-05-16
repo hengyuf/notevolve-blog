@@ -358,7 +358,7 @@ figcaption {
 
 .snapshot {
   position: relative;
-  min-height: 250px;
+  min-height: 360px;
   padding: 12px;
   display: grid;
   align-content: start;
@@ -378,8 +378,8 @@ figcaption {
 }
 
 .cell {
-  min-height: 58px;
-  padding: 11px 12px;
+  min-height: 52px;
+  padding: 9px 11px;
   border: 1px solid #cad5d8;
   border-left-width: 5px;
   border-radius: 7px;
@@ -397,7 +397,7 @@ figcaption {
 
 .cell code {
   display: block;
-  margin-top: 8px;
+  margin-top: 6px;
   color: #24343b;
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   font-size: 12px;
@@ -408,7 +408,7 @@ figcaption {
 
 .cell small {
   display: block;
-  margin-top: 8px;
+  margin-top: 6px;
   color: #5e6c74;
   font-size: 12px;
 }

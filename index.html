@@ -8,7 +8,7 @@
       name="description"
       content="A blog-style overview of NotEvolve, a Jupyter-notebook-based framework for long-horizon agentic problem solving."
     />
-    <link rel="stylesheet" href="styles.css?v=20260516-context" />
+    <link rel="stylesheet" href="styles.css?v=20260516-context2" />
   </head>
   <body>
     <header class="site-header">
@@ -143,38 +143,58 @@
             </div>
             <div class="context-snapshots">
               <div class="snapshot">
-                <div class="cell md-cell"><b>Cell 0</b><span>Round plan</span></div>
+                <div class="cell md-cell">
+                  <b>Cell 0</b><span>Round plan</span>
+                  <small>try two stronger variants</small>
+                </div>
                 <div class="cell code-cell">
                   <b>Cell 1</b><span class="status unfolded">unfolded</span>
-                  <code>(50 lines) def baseline(): ...</code>
-                  <small>output: score = 0.80</small>
+                  <code>(50 lines) def baseline(): return heuristic()</code>
+                  <small>output: score = 0.8</small>
                 </div>
               </div>
               <div class="snapshot">
+                <div class="cell md-cell">
+                  <b>Cell 0</b><span>Round plan</span>
+                  <small>try two stronger variants</small>
+                </div>
+                <div class="cell code-cell">
+                  <b>Cell 1</b><span class="status unfolded">unfolded</span>
+                  <code>(50 lines) def baseline(): return heuristic()</code>
+                  <small>output: score = 0.8</small>
+                </div>
                 <div class="cell code-cell">
                   <b>Cell 2</b><span class="status unfolded">unfolded</span>
-                  <code>(34 lines) def attempt_a(): ...</code>
-                  <small>clipped output: score = 0.60</small>
+                  <code>(32 lines) def methodA(): return refinedA()</code>
+                  <small>output: score = 0.6</small>
                 </div>
                 <div class="cell code-cell">
                   <b>Cell 3</b><span class="status unfolded">unfolded</span>
-                  <code>(48 lines) def attempt_b(): ...</code>
-                  <small>summary: score = 1.00</small>
+                  <code>(45 lines) def methodB(): return refinedB()</code>
+                  <small>output: score = 1.0</small>
                 </div>
               </div>
               <div class="snapshot">
+                <div class="cell md-cell">
+                  <b>Cell 0</b><span>Round plan</span>
+                  <small>try two stronger variants</small>
+                </div>
                 <div class="cell folded-cell">
                   <b>Cell 1</b><span class="status folded">folded</span>
-                  <small>baseline, score 0.80</small>
+                  <small>desc: baseline, score = 0.8</small>
                 </div>
                 <div class="cell deleted-cell">
-                  <b>Cell 2</b><span class="status deleted">deleted</span>
+                  <b>Cell x</b><span class="status deleted">deleted</span>
                   <small>low-score attempt removed</small>
                 </div>
                 <div class="cell code-cell">
-                  <b>Cell 3</b><span class="status unfolded">kept</span>
-                  <code>(48 lines) def attempt_b(): ...</code>
-                  <small>best output retained</small>
+                  <b>Cell 2</b><span class="status unfolded">kept</span>
+                  <code>(45 lines) def methodB(): return refinedB()</code>
+                  <small>output: score = 1.0</small>
+                </div>
+                <div class="cell md-cell">
+                  <b>Cell 3</b><span>Round summary</span>
+                  <small>Method A failed/deleted. Method B works best. Next: refine B.</small>
                 </div>
               </div>
             </div>
