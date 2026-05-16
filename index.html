@@ -120,8 +120,33 @@
           </figure>
         </section>
 
+
         <section id="context-management" class="section">
           <h2>Context Management</h2>
+          <div class="notebook-demo-card">
+            <figure class="notebook-demo-video-wrap">
+              <div class="notebook-demo-video-frame">
+                <video
+                  class="notebook-demo-video"
+                  controls
+                  loop
+                  muted
+                  playsinline
+                  preload="metadata"
+                  poster="assets/notevolve-notebook-demo-poster.jpg"
+                  aria-label="Screen recording of the NotEvolve notebook generating and evaluating training code"
+                >
+                  <source src="assets/notevolve-notebook-demo.mp4" type="video/mp4" />
+                  Your browser does not support embedded video. You can open the
+                  notebook demo at <a href="assets/notevolve-notebook-demo.mp4">this video link</a>.
+                </video>
+              </div>
+              <figcaption>
+                NotEvolve iteratively identifies code versions,
+                compares outputs, generates and updates code.
+              </figcaption>
+            </figure>
+          </div>
           <p>
             A raw Jupyter notebook is a verbose JSON document with execution
             metadata, widget state, and potentially long cell outputs. NotEvolve

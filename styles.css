@@ -880,6 +880,23 @@ input[type="range"] {
   }
 }
 
+.notebook-demo-video-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* centers horizontally */
+}
+
+.notebook-demo-video-frame {
+  max-width: 480px;   /* controls size — adjust to taste (400–600px works well) */
+  width: 100%;
+}
+
+.notebook-demo-video {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
 @media (max-width: 640px) {
   .site-header {
     position: static;
