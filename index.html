@@ -391,10 +391,110 @@
               intermediate artifacts, recover from errors, and iterate on
               submissions.
             </p>
-            <div class="placeholder full-placeholder">
-              Placeholder: add the final MLEBench experiment section here,
-              including the full Kaggle task table, token/runtime analysis,
-              and any radar or per-task figures.
+            <p>
+              NotEvolve is competitive with CheetahHarness, the strongest
+              realistic code-development baseline, and is best or tied-best on
+              several tasks including random-acts-of-pizza, tps-dec-2021, and
+              dog-breed. The tradeoff is token budget and wall-clock time:
+              NotEvolve exposes rich notebook state to the model, which
+              increases context cost and leads to more compute-intensive
+              pipelines. Stronger context compaction is the key next step.
+            </p>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Task</th>
+                    <th>Metric</th>
+                    <th>NotEvolve</th>
+                    <th>AIDE</th>
+                    <th>CheetahHarness</th>
+                    <th>OpenEvolve</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>random-acts-of-pizza</td>
+                    <td>AUC ↑</td>
+                    <td class="best">0.7799</td>
+                    <td>0.7746</td>
+                    <td>0.7689</td>
+                    <td>0.531</td>
+                  </tr>
+                  <tr>
+                    <td>nomad2018</td>
+                    <td>RMSLE ↓</td>
+                    <td>0.0621</td>
+                    <td>0.0675</td>
+                    <td class="best">0.0603</td>
+                    <td>0.259</td>
+                  </tr>
+                  <tr>
+                    <td>spaceship-titanic</td>
+                    <td>acc ↑</td>
+                    <td>0.8149</td>
+                    <td>0.7977</td>
+                    <td class="best">0.8218</td>
+                    <td>0.802</td>
+                  </tr>
+                  <tr>
+                    <td>spooky-author</td>
+                    <td>LL ↓</td>
+                    <td>0.4164</td>
+                    <td>0.5494</td>
+                    <td>0.4634</td>
+                    <td class="best">0.363</td>
+                  </tr>
+                  <tr>
+                    <td>jigsaw-toxic</td>
+                    <td>AUC ↑</td>
+                    <td class="best">0.9748</td>
+                    <td class="best">0.9748</td>
+                    <td>0.9730</td>
+                    <td>—</td>
+                  </tr>
+                  <tr>
+                    <td>tps-dec-2021</td>
+                    <td>acc ↑</td>
+                    <td class="best">0.9608</td>
+                    <td>0.9405</td>
+                    <td>0.8934</td>
+                    <td>0.908</td>
+                  </tr>
+                  <tr>
+                    <td>tps-may-2022</td>
+                    <td>acc ↑</td>
+                    <td>0.9270</td>
+                    <td>0.9041</td>
+                    <td>0.9082</td>
+                    <td class="best">0.982</td>
+                  </tr>
+                  <tr>
+                    <td>dog-breed</td>
+                    <td>LL ↓</td>
+                    <td class="best">0.7782</td>
+                    <td>0.8275</td>
+                    <td>4.1775</td>
+                    <td>4.814</td>
+                  </tr>
+                  <tr>
+                    <td>nyc-taxi (5.3 GB)</td>
+                    <td>RMSE ↓</td>
+                    <td>4.4589</td>
+                    <td>5.3568</td>
+                    <td>4.6838</td>
+                    <td class="best">3.119</td>
+                  </tr>
+                  <tr>
+                    <td>dogs-vs-cats (1.2 GB)</td>
+                    <td>LL ↓</td>
+                    <td>0.3542</td>
+                    <td class="best">0.1213</td>
+                    <td>0.6645</td>
+                    <td>0.628</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
 
