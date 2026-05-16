@@ -300,6 +300,10 @@ figcaption {
 
 .context-figure {
   margin: 30px 0 0;
+  padding: 18px;
+  border: 1px solid rgba(202, 213, 216, 0.75);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.32);
 }
 
 .context-phases,
@@ -321,8 +325,20 @@ figcaption {
 }
 
 .phase-card {
+  position: relative;
   min-height: 112px;
   padding: 18px;
+}
+
+.phase-card:not(:last-child)::after {
+  content: ">";
+  position: absolute;
+  top: 50%;
+  right: -14px;
+  transform: translate(50%, -50%);
+  color: var(--accent);
+  font-weight: 850;
+  z-index: 2;
 }
 
 .phase-card span {
@@ -341,12 +357,24 @@ figcaption {
 }
 
 .snapshot {
+  position: relative;
   min-height: 250px;
   padding: 12px;
   display: grid;
   align-content: start;
   gap: 10px;
   background: rgba(255, 255, 255, 0.46);
+}
+
+.snapshot:not(:last-child)::after {
+  content: ">";
+  position: absolute;
+  top: 50%;
+  right: -14px;
+  transform: translate(50%, -50%);
+  color: var(--accent);
+  font-size: 18px;
+  font-weight: 850;
 }
 
 .cell {
@@ -662,6 +690,11 @@ input[type="range"] {
   .context-phases,
   .context-snapshots {
     grid-template-columns: 1fr;
+  }
+
+  .phase-card:not(:last-child)::after,
+  .snapshot:not(:last-child)::after {
+    display: none;
   }
 
   .wide-figure,
