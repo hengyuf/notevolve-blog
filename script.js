@@ -323,3 +323,211 @@
   resizeCanvas();
   setFrame(0, false);
 })();
+
+(function () {
+  const charts = Array.from(document.querySelectorAll("[data-kernelbench-radar]"));
+  if (!charts.length) return;
+
+  const levels = {
+    level1: {
+      label: "Level 1",
+      notebook: { speedup: 1.170, totalTokens: 22832, runtime: 182.2 },
+      cheetah: { speedup: 0.992, totalTokens: 46459, runtime: 174.4 }
+    },
+    level2: {
+      label: "Level 2",
+      notebook: { speedup: 0.966, totalTokens: 16742, runtime: 182.2 },
+      cheetah: { speedup: 0.969, totalTokens: 30074, runtime: 163.4 }
+    }
+  };
+
+  const axes = [
+    { key: "speedup", label: "Speedup" },
+    { key: "tokens", label: "Token efficiency" },
+    { key: "runtime", label: "Runtime efficiency" }
+  ];
+
+  const ns = "http://www.w3.org/2000/svg";
+  const center = { x: 160, y: 154 };
+  const radius = 94;
+
+  function add(svg, name, attrs) {
+    const el = document.createElementNS(ns, name);
+    Object.entries(attrs).forEach(([key, value]) => el.setAttribute(key, value));
+    svg.appendChild(el);
+    return el;
+  }
+
+  function utilityValues(level) {
+    const maxSpeedup = Math.max(level.notebook.speedup, level.cheetah.speedup);
+    const minTokens = Math.min(level.notebook.totalTokens, level.cheetah.totalTokens);
+    const minRuntime = Math.min(level.notebook.runtime, level.cheetah.runtime);
+
+    return {
+      notebook: [
+        level.notebook.speedup / maxSpeedup,
+        minTokens / level.notebook.totalTokens,
+        minRuntime / level.notebook.runtime
+      ],
+      cheetah: [
+        level.cheetah.speedup / maxSpeedup,
+        minTokens / level.cheetah.totalTokens,
+        minRuntime / level.cheetah.runtime
+      ]
+    };
+  }
+
+  function vertex(value, index, progress) {
+    const angle = (-90 + index * 120) * (Math.PI / 180);
+    const scaled = radius * value * progress;
+    return {
+      x: center.x + Math.cos(angle) * scaled,
+      y: center.y + Math.sin(angle) * scaled
+    };
+  }
+
+  function pointsFor(values, progress) {
+    return values
+      .map((value, index) => {
+        const point = vertex(value, index, progress);
+        return `${point.x.toFixed(1)},${point.y.toFixed(1)}`;
+      })
+      .join(" ");
+  }
+
+  function drawFrame(svg, level) {
+    add(svg, "title", {}).textContent = `${level.label} normalized KernelBench radar`;
+
+    [1 / 3, 2 / 3, 1].forEach((ring) => {
+      add(svg, "polygon", {
+        class: "kernelbench-grid",
+        points: pointsFor([ring, ring, ring], 1)
+      });
+    });
+
+    axes.forEach((axis, index) => {
+      const end = vertex(1, index, 1);
+      const labelPoint = vertex(1.23, index, 1);
+      add(svg, "line", {
+        class: "kernelbench-axis",
+        x1: center.x,
+        y1: center.y,
+        x2: end.x.toFixed(1),
+        y2: end.y.toFixed(1)
+      });
+
+      const label = add(svg, "text", {
+        class: "kernelbench-axis-label",
+        x: labelPoint.x.toFixed(1),
+        y: labelPoint.y.toFixed(1),
+        "text-anchor": "middle",
+        "dominant-baseline": "middle"
+      });
+      label.textContent = axis.label;
+    });
+  }
+
+  function makeRenderer(svg) {
+    const level = levels[svg.dataset.kernelbenchRadar];
+    if (!level) return null;
+
+    const values = utilityValues(level);
+    drawFrame(svg, level);
+
+    const cheetah = add(svg, "polygon", {
+      class: "kernelbench-shape kernelbench-shape-cheetah",
+      points: pointsFor(values.cheetah, 0)
+    });
+    const notebook = add(svg, "polygon", {
+      class: "kernelbench-shape kernelbench-shape-notebook",
+      points: pointsFor(values.notebook, 0)
+    });
+
+    const cheetahDots = axes.map((axis, index) =>
+      add(svg, "circle", {
+        class: "kernelbench-dot-cheetah",
+        cx: center.x,
+        cy: center.y,
+        r: 0,
+        "aria-hidden": "true",
+        "data-axis": axis.key,
+        "data-index": index
+      })
+    );
+    const notebookDots = axes.map((axis, index) =>
+      add(svg, "circle", {
+        class: "kernelbench-dot-notebook",
+        cx: center.x,
+        cy: center.y,
+        r: 0,
+        "aria-hidden": "true",
+        "data-axis": axis.key,
+        "data-index": index
+      })
+    );
+
+    return (progress) => {
+      cheetah.setAttribute("points", pointsFor(values.cheetah, progress));
+      notebook.setAttribute("points", pointsFor(values.notebook, progress));
+
+      [
+        { dots: cheetahDots, series: values.cheetah },
+        { dots: notebookDots, series: values.notebook }
+      ].forEach(({ dots, series }) => {
+        dots.forEach((dot, index) => {
+          const point = vertex(series[index], index, progress);
+          dot.setAttribute("cx", point.x.toFixed(1));
+          dot.setAttribute("cy", point.y.toFixed(1));
+          dot.setAttribute("r", (3.8 * Math.min(1, progress * 1.4)).toFixed(1));
+        });
+      });
+    };
+  }
+
+  const renderers = charts.map(makeRenderer).filter(Boolean);
+  const reduceMotion =
+    window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function renderAll(progress) {
+    renderers.forEach((render) => render(progress));
+  }
+
+  if (reduceMotion) {
+    renderAll(1);
+    return;
+  }
+
+  let started = false;
+
+  function animate() {
+    if (started) return;
+    started = true;
+
+    const start = performance.now();
+    const duration = 900;
+    const tick = (now) => {
+      const raw = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - raw, 3);
+      renderAll(eased);
+      if (raw < 1) requestAnimationFrame(tick);
+    };
+
+    requestAnimationFrame(tick);
+  }
+
+  const target = document.getElementById("kernelbench-radar") || charts[0];
+  if ("IntersectionObserver" in window) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          animate();
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.28 }
+    );
+    observer.observe(target);
+  } else {
+    requestAnimationFrame(animate);
+  }
+})();

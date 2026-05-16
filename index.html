@@ -8,7 +8,7 @@
       name="description"
       content="A blog-style overview of NotEvolve, a Jupyter-notebook-based framework for long-horizon agentic problem solving."
     />
-    <link rel="stylesheet" href="styles.css?v=20260516-context4" />
+    <link rel="stylesheet" href="styles.css?v=20260516-kernelbench" />
   </head>
   <body>
     <header class="site-header">
@@ -296,6 +296,94 @@
               and any radar or per-task figures.
             </div>
           </div>
+
+          <div id="kernelbench" class="result-subsection kernelbench-section">
+            <h3>KernelBench GPU Kernels</h3>
+            <p>
+              KernelBench extends our evaluation to systems optimization. Each
+              task asks an agent to replace a PyTorch workload with a correct
+              and faster GPU kernel, so success requires more than code
+              generation: the agent must compile, test, benchmark, and revise
+              candidate kernels. This makes it a natural stress test for
+              notebook-based memory, since a notebook can preserve candidate
+              kernels, error traces, benchmark outputs, and debugging notes
+              across attempts.
+            </p>
+            <p>
+              Across 300 trials, NotEvolve achieves higher overall mean speedup
+              than CheetahHarness, 1.096 vs. 0.982, and finds more successful
+              accelerations: 76 vs. 49 trials above 1.0x speedup and 15 vs. 4
+              trials above 2.0x speedup. The gain is strongest on Level 1,
+              while Level 2 is essentially tied. NotEvolve uses fewer input
+              tokens on average, but more output tokens and slightly higher
+              wall-clock time, so this is not a wall-clock speedup claim. The
+              result suggests that notebook-based state improves speedup
+              discovery overall, but stronger harness engineering is still
+              needed to reduce compile-run-debug overhead.
+            </p>
+
+            <figure id="kernelbench-radar" class="kernelbench-figure">
+              <div class="kernelbench-figure-header">
+                <div>
+                  <p class="kicker">KernelBench radar</p>
+                  <h4>Speedup quality vs. efficiency</h4>
+                </div>
+                <div class="kernelbench-legend" aria-label="KernelBench radar legend">
+                  <span><i class="legend-swatch legend-notebook"></i>NotEvolve / Notebook</span>
+                  <span><i class="legend-swatch legend-cheetah"></i>CheetahHarness / Cheetah</span>
+                </div>
+              </div>
+
+              <div class="kernelbench-panels">
+                <div class="kernelbench-panel">
+                  <div class="kernelbench-panel-title">
+                    <h4>Level 1</h4>
+                    <span>strongest gain</span>
+                  </div>
+                  <svg
+                    class="kernelbench-radar"
+                    data-kernelbench-radar="level1"
+                    viewBox="0 0 320 300"
+                    role="img"
+                    aria-label="KernelBench Level 1 normalized radar comparing NotEvolve Notebook and CheetahHarness Cheetah"
+                  ></svg>
+                  <p class="kernelbench-panel-meta">
+                    Raw values: speedup 1.170 vs. 0.992; tokens 22.8k vs.
+                    46.5k; runtime 182.2s vs. 174.4s.
+                  </p>
+                </div>
+
+                <div class="kernelbench-panel">
+                  <div class="kernelbench-panel-title">
+                    <h4>Level 2</h4>
+                    <span>essentially tied</span>
+                  </div>
+                  <svg
+                    class="kernelbench-radar"
+                    data-kernelbench-radar="level2"
+                    viewBox="0 0 320 300"
+                    role="img"
+                    aria-label="KernelBench Level 2 normalized radar comparing NotEvolve Notebook and CheetahHarness Cheetah"
+                  ></svg>
+                  <p class="kernelbench-panel-meta">
+                    Raw values: speedup 0.966 vs. 0.969; tokens 16.7k vs.
+                    30.1k; runtime 182.2s vs. 163.4s.
+                  </p>
+                </div>
+              </div>
+
+              <div class="kernelbench-metric-pills" aria-label="KernelBench headline metrics">
+                <span>1.096 vs 0.982 mean speedup</span>
+                <span>76 vs 49 trials &gt;1.0x</span>
+                <span>15 vs 4 trials &gt;=2.0x</span>
+              </div>
+
+              <figcaption>
+                All axes are normalized so that farther outward is better.
+              </figcaption>
+            </figure>
+          </div>
+
           <div class="result-grid">
             <div class="result-card">
               <h3>State Matters</h3>
