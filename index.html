@@ -15,6 +15,7 @@
       <a class="brand" href="#top">NotEvolve</a>
       <nav aria-label="Article navigation">
         <a href="#architecture">Architecture</a>
+        <a href="#context-management">Context</a>
         <a href="#results">Results</a>
         <a href="#circle-packing">Case Study</a>
         <a href="proposal_notebook.pdf">PDF</a>
@@ -111,6 +112,79 @@
               summary, records a score, and checkpoints the resulting notebook.
               The scored checkpoints become inputs to the next outer-loop
               evolution step.
+            </figcaption>
+          </figure>
+        </section>
+
+        <section id="context-management" class="section">
+          <h2>Context Management</h2>
+          <p>
+            A raw Jupyter notebook is a verbose JSON document with execution
+            metadata, widget state, and potentially long cell outputs. NotEvolve
+            instead renders the notebook into a compact text view, exposes only
+            the cells that are useful for the current decision, and lets the
+            agent actively summarize, fold, unfold, and delete cells as the
+            notebook grows.
+          </p>
+          <figure class="context-figure">
+            <div class="context-phases" aria-label="Context management phases">
+              <div class="phase-card">
+                <span>Beginning</span>
+                <p>Render notebook JSON into compact LLM context.</p>
+              </div>
+              <div class="phase-card">
+                <span>Execution</span>
+                <p>Append new cells, summarize runs, and clip long outputs.</p>
+              </div>
+              <div class="phase-card">
+                <span>Cleanup</span>
+                <p>Fold useful history and remove failed branches of work.</p>
+              </div>
+            </div>
+            <div class="context-snapshots">
+              <div class="snapshot">
+                <div class="cell md-cell"><b>Cell 0</b><span>Round plan</span></div>
+                <div class="cell code-cell">
+                  <b>Cell 1</b><span class="status unfolded">unfolded</span>
+                  <code>(50 lines) def baseline(): ...</code>
+                  <small>output: score = 0.80</small>
+                </div>
+              </div>
+              <div class="snapshot">
+                <div class="cell code-cell">
+                  <b>Cell 2</b><span class="status unfolded">unfolded</span>
+                  <code>(34 lines) def attempt_a(): ...</code>
+                  <small>clipped output: score = 0.60</small>
+                </div>
+                <div class="cell code-cell">
+                  <b>Cell 3</b><span class="status unfolded">unfolded</span>
+                  <code>(48 lines) def attempt_b(): ...</code>
+                  <small>summary: score = 1.00</small>
+                </div>
+              </div>
+              <div class="snapshot">
+                <div class="cell folded-cell">
+                  <b>Cell 1</b><span class="status folded">folded</span>
+                  <small>baseline, score 0.80</small>
+                </div>
+                <div class="cell deleted-cell">
+                  <b>Cell 2</b><span class="status deleted">deleted</span>
+                  <small>low-score attempt removed</small>
+                </div>
+                <div class="cell code-cell">
+                  <b>Cell 3</b><span class="status unfolded">kept</span>
+                  <code>(48 lines) def attempt_b(): ...</code>
+                  <small>best output retained</small>
+                </div>
+              </div>
+            </div>
+            <figcaption>
+              Context management is part of the agent loop. At the start of a
+              round, the renderer converts notebook state into compact text.
+              During execution, tool calls add and run cells while summaries
+              and output clipping keep observations short. At the end of a
+              round, cleanup folds reusable history, deletes low-value cells,
+              and preserves a concise summary for the next branch state.
             </figcaption>
           </figure>
         </section>
