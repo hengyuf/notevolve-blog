@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NotEvolve: A Notebook as the World Model for Self-Evolving Agents</title>
+    <meta
+      name="description"
+      content="A blog-style overview of NotEvolve, a Jupyter-notebook-based framework for long-horizon agentic problem solving."
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#top">NotEvolve</a>
+      <nav aria-label="Article navigation">
+        <a href="#architecture">Architecture</a>
+        <a href="#results">Results</a>
+        <a href="#circle-packing">Case Study</a>
+        <a href="proposal_notebook.pdf">PDF</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="kicker">Notebook-State Evolution for Agentic Research</p>
+          <h1>NotEvolve: A Notebook as the World Model for Self-Evolving Agents</h1>
+          <p class="dek">
+            NotEvolve treats a Jupyter notebook as the evolving state of an
+            AI agent: a place where plans, code, outputs, visual evidence, and
+            live kernel variables all persist across rounds.
+          </p>
+          <p class="byline">Scalable AI final report · May 2026</p>
+        </div>
+        <div class="hero-panel" aria-label="Benchmarks covered by the report">
+          <div>
+            <span class="metric-value">Math</span>
+            <span class="metric-label">best or tied-best vs. AlphaEvolve/OpenEvolve</span>
+          </div>
+          <div>
+            <span class="metric-value">Terminal</span>
+            <span class="metric-label">10/10 solved with local Nemotron</span>
+          </div>
+          <div>
+            <span class="metric-value">MLEBench</span>
+            <span class="metric-label">competitive on Kaggle-style workflows</span>
+          </div>
+        </div>
+      </section>
+
+      <article class="article">
+        <p class="lead">
+          Long-horizon problem solving depends on what an agent can remember,
+          inspect, execute, and revise. NotEvolve makes the notebook itself the
+          agent's world model. Instead of evolving only a program file or
+          appending text to a transcript, the system evolves complete notebook
+          branches that contain executable code, natural-language plans,
+          intermediate outputs, plots, summaries, and hidden kernel state.
+        </p>
+
+        <section class="section">
+          <h2>Why a Notebook?</h2>
+          <div class="three-up">
+            <div class="info-card">
+              <h3>Evolvable State</h3>
+              <p>
+                A branch is a full notebook state, denoted as
+                <span class="math">N<sub>t</sub><sup>(i)</sup></span>, rather
+                than a single source file. Selection can preserve whole
+                research trajectories.
+              </p>
+            </div>
+            <div class="info-card">
+              <h3>Multimodal Memory</h3>
+              <p>
+                Cells store plans, code, text outputs, tables, images, and
+                summaries. The renderer exposes only the useful parts to the
+                LLM context.
+              </p>
+            </div>
+            <div class="info-card">
+              <h3>Executable Environment</h3>
+              <p>
+                The kernel keeps helper functions, cached data, solver states,
+                and best-known variables alive, so later cells can build on
+                earlier experiments.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section id="architecture" class="section">
+          <h2>How NotEvolve Runs</h2>
+          <p>
+            NotEvolve has an outer loop and an inner loop. The outer loop is a
+            general evolution controller: it receives a population of notebook
+            branches and their scores, then proposes the next population by
+            selection, mutation, recombination, tournament search, MAP-Elites,
+            or another evolution strategy. The inner loop runs one branch for
+            one round.
+          </p>
+          <figure class="architecture-figure">
+            <img src="assets/overview.png" alt="NotEvolve outer-loop and inner-loop architecture" />
+            <figcaption>
+              Each branch enters a three-phase notebook-agent round. First,
+              the context renderer converts the notebook into compact text and
+              the agent writes a plan. Second, the LLM calls notebook tools to
+              add, edit, run, summarize, fold, and unfold cells. Third, a
+              cleanup phase folds or deletes low-value cells, inserts a round
+              summary, records a score, and checkpoints the resulting notebook.
+              The scored checkpoints become inputs to the next outer-loop
+              evolution step.
+            </figcaption>
+          </figure>
+        </section>
+
+        <section id="results" class="section">
+          <h2>Results</h2>
+          <p>
+            We evaluate NotEvolve across three settings: mathematical
+            optimization with directly evaluable objectives, Terminal Bench
+            software tasks with a local open-weight model, and MLEBench-style
+            Kaggle workflows with long-horizon data and modeling loops.
+          </p>
+
+          <div class="result-subsection">
+            <h3>Mathematical Optimization</h3>
+            <p>
+              Under the same Gemini 3 Flash base model, NotEvolve matches or
+              exceeds AlphaEvolve/OpenEvolve-style baselines on the tested
+              mathematical optimization tasks.
+            </p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Problem</th>
+                  <th>AlphaEvolve</th>
+                  <th>OpenEvolve</th>
+                  <th>NotEvolve</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Circle Packing ↑</td>
+                  <td>2.635</td>
+                  <td>2.4672</td>
+                  <td class="best">2.635983</td>
+                </tr>
+                <tr>
+                  <td>Erdos Min-Overlap ↓</td>
+                  <td>0.380923</td>
+                  <td>0.4334</td>
+                  <td class="best">0.38089</td>
+                </tr>
+                <tr>
+                  <td>Heilbronn Triangle ↑</td>
+                  <td>0.03653</td>
+                  <td>0.0349</td>
+                  <td class="best">0.03653</td>
+                </tr>
+                <tr>
+                  <td>Min-Max Distribution ↑</td>
+                  <td>0.24004706</td>
+                  <td>0.2300</td>
+                  <td class="best">0.24005088</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          </div>
+
+          <div id="terminal-bench" class="result-subsection">
+            <h3>Terminal Bench</h3>
+            <p>
+              We adapt ten Terminal Bench tasks and run them with the same
+              locally served Nemotron-3-Nano-30B model. The notebook harness
+              gives the model persistent executable state, shell outputs,
+              intermediate files, and error-recovery context.
+            </p>
+            <div class="placeholder full-placeholder">
+              Placeholder: add the final Terminal Bench experiment section here,
+              including the pass/fail table, runtime comparison, and qualitative
+              examples from the notebook harness.
+            </div>
+          </div>
+
+          <div id="mlebench" class="result-subsection">
+            <h3>MLEBench-style Kaggle Tasks</h3>
+            <p>
+              We compare NotEvolve with AIDE, CheetahHarness, and OpenEvolve
+              on public Kaggle-style MLEBench tasks using the same locally
+              hosted Nemotron-120B-Super model. This setting stresses notebook
+              memory: the agent must inspect data, build pipelines, cache
+              intermediate artifacts, recover from errors, and iterate on
+              submissions.
+            </p>
+            <div class="placeholder full-placeholder">
+              Placeholder: add the final MLEBench experiment section here,
+              including the full Kaggle task table, token/runtime analysis,
+              and any radar or per-task figures.
+            </div>
+          </div>
+          <div class="result-grid">
+            <div class="result-card">
+              <h3>State Matters</h3>
+              <p>
+                The largest gains appear when progress depends on intermediate
+                artifacts: evaluated layouts, shell outputs, trained models,
+                cached data, and recoverable failed attempts.
+              </p>
+            </div>
+            <div class="result-card">
+              <h3>Cost Tradeoff</h3>
+              <p>
+                The notebook state improves long-horizon behavior, but rich
+                context can be expensive. Better state distillation is a key
+                direction for future versions.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section id="circle-packing" class="section">
+          <h2>Case Study: Circle Packing</h2>
+          <p>
+            The Circle Packing task asks the agent to place 26 circles inside
+            the unit square and maximize the sum of radii while keeping all
+            circles non-overlapping and within the boundary. The notebook is
+            useful here because the agent can repeatedly score layouts,
+            visualize gaps, keep the best layout in kernel variables, and
+            warm-start new solvers from previous cells.
+          </p>
+
+          <div class="interactive">
+            <div class="packing-stage">
+              <canvas id="packingCanvas" width="640" height="640" aria-label="Animated circle packing layout"></canvas>
+              <div class="stage-caption">
+                <span id="frameLabel">R1 C2</span>
+                <strong id="frameScore">2.080000</strong>
+              </div>
+            </div>
+            <div class="packing-controls">
+              <div class="current-card">
+                <p class="kicker">Current notebook behavior</p>
+                <h3 id="behaviorTitle">Grid baseline</h3>
+                <p id="behaviorText">
+                  A simple grid gives a valid but loose packing.
+                </p>
+              </div>
+              <div class="chart-card">
+                <svg id="scoreChart" viewBox="0 0 720 260" role="img" aria-label="Circle Packing score over rounds and cells"></svg>
+              </div>
+              <div class="controls-row">
+                <button id="playButton" type="button">Play</button>
+                <input id="frameSlider" type="range" min="0" max="7" step="1" value="0" aria-label="Circle Packing evolution frame" />
+              </div>
+              <div id="frameButtons" class="frame-buttons" aria-label="Circle Packing milestones"></div>
+            </div>
+          </div>
+
+          <div class="behavior-grid">
+            <div>
+              <h3>Executable Scoring</h3>
+              <p>
+                Each candidate is evaluated in the notebook, so the score
+                becomes an immediate signal for the next branch and the next
+                outer-loop selection step.
+              </p>
+            </div>
+            <div>
+              <h3>Visual Diagnosis</h3>
+              <p>
+                Plots reveal empty regions and contact structure that are hard
+                to infer from source code alone.
+              </p>
+            </div>
+            <div>
+              <h3>Warm-start Search</h3>
+              <p>
+                Later cells reuse variables such as the current best centers
+                and radii, then try new local optimizers and relocation moves.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>Discussion</h2>
+          <p>
+            These experiments support the main hypothesis of the project:
+            for long-horizon agents, state representation is a core capability.
+            The notebook gives the agent a persistent laboratory where partial
+            solutions, failures, summaries, plots, and live objects remain
+            available to future reasoning steps.
+          </p>
+          <p>
+            The next challenge is making this state more efficient and robust.
+            Notebooks can accumulate many cells and long outputs, so stronger
+            context distillation, folding policies, and cleanup are needed.
+            Kernel state also needs better checkpointing, replay, dependency
+            tracking, and sandboxing before notebook-state evolution can be
+            deployed broadly across scientific, systems, and machine-learning
+            engineering workloads.
+          </p>
+        </section>
+      </article>
+    </main>
+
+    <footer class="site-footer">
+      <span>NotEvolve blog version generated from the final report.</span>
+      <a href="proposal_notebook.pdf">Read the full PDF</a>
+    </footer>
+
+    <script src="data/packing-trajectory.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
