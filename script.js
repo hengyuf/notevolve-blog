@@ -524,9 +524,19 @@
           observer.disconnect();
         }
       },
-      { threshold: 0.28 }
+      { threshold: 0.05 }
     );
     observer.observe(target);
+    // If the section is already visible when the page loads (e.g. via anchor),
+    // the observer may not fire until the next scroll tick. Kick off a one-shot
+    // check after the first paint so the chart is never stuck at the empty state.
+    requestAnimationFrame(() => {
+      const rect = target.getBoundingClientRect();
+      if (rect.top < window.innerHeight && rect.bottom > 0) {
+        animate();
+        observer.disconnect();
+      }
+    });
   } else {
     requestAnimationFrame(animate);
   }
