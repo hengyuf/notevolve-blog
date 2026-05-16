@@ -466,18 +466,19 @@ input[type="range"] {
 }
 
 .frame-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 6px;
 }
 
 .frame-buttons button {
   min-height: 34px;
-  padding: 0 10px;
+  padding: 0 4px;
   border-color: var(--line);
   background: var(--paper);
   color: #40505a;
-  font-size: 12px;
+  font-size: 11px;
+  white-space: nowrap;
 }
 
 .frame-buttons button.active {
@@ -557,6 +558,10 @@ input[type="range"] {
 
   .controls-row {
     grid-template-columns: 1fr;
+  }
+
+  .frame-buttons {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 
   .site-footer {
